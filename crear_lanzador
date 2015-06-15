@@ -1,0 +1,46 @@
+#!/bin/bash
+# - crear_lanzador - version 1.0 -
+# Copiar a /usr/bin/crear_lanzador
+# Este script es llamado por la entensión para nautilus
+# /usr/lib/nautilus/extensions-3.0/crear_lanzador.so
+# la cual le pasa la ruta donde hay que crear el lanzador.
+# El escritorio es un caso especial y en vez de pasar la
+# ruta se pasa la palabra "x-nautilus-desktop" y el script
+# ya se encarga de buscar donde está el escritorio.
+
+if [ -z "$1" ] ; then
+   zenity --error --text "No se ha pasado ningúna ruta al script \"crear_lanzador\"."
+   exit 1
+fi
+
+if [ "$1" == "x-nautilus-desktop" ] ; then
+   # Se averigua la ruta del escritorio
+   home=$(echo $HOME | sed 's/\//\\\//g') # Prepara $home para el "sed" siguiente
+   ruta=$(grep XDG_DESKTOP_DIR  ~/.config/user-dirs.dirs | cut -d"=" -f 2 | tr -d "\"" | sed "s/\$HOME/$home/")
+else
+   ruta="$1"
+fi
+
+cd $ruta
+if [ "$?" != "0" ] ; then
+   zenity --error --text "No se pudo entrar en la ruta: $ruta"
+   exit 1
+fi
+
+rm -f _nuevo_lanzador_.desktop
+gnome-desktop-item-edit --create-new "_nuevo_lanzador_.desktop"
+if [ ! -f "_nuevo_lanzador_.desktop" ] ; then
+   # Si pulsamos el botón cancelar no se crea el fichero .desktop
+   exit 0
+fi 
+nombre=`grep -e 'Name=' _nuevo_lanzador_.desktop | cut -d= -f2`.desktop
+nombre_valido=`echo "$nombre" | tr / _`
+if [ -f "$nombre_valido" ] ; then
+   zenity --error --text "Ya existe el fichero $nombre_valido"
+   exit 1
+fi
+mv _nuevo_lanzador_.desktop "$nombre_valido"
+if [ "$?" != "0" ] ; then
+   zenity --error --text "No se pudo renombrar:\n_nuevo_lanzador_.desktop\ncon el nombre:\n$nombre_valido"
+   rm -f nuevo_lanzador.desktop
+fi
