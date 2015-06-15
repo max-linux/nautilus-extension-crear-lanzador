@@ -1,0 +1,22 @@
+Source: nautilus-extension-crear-lanzador
+Section: gnome
+Priority: optional
+Maintainer: Mario Izquierdo Rodríguez (Thinetic Systems SLNE) <mario.izquierdo@thinetic.es>
+Build-Depends: debhelper (>= 9),
+               pkg-config,
+               libnautilus-extension1a,
+               libnautilus-extension-dev,
+               libgtk-3-dev,
+               libglib2.0-dev
+Standards-Version: 3.9.5
+Homepage: https://github.com/max-linux/nautilus-extension-crear-lanzador
+Vcs-Git: https://github.com/max-linux/nautilus-extension-crear-lanzador.git
+Vcs-Browser: https://github.com/max-linux/nautilus-extension-crear-lanzador
+
+Package: nautilus-extension-crear-lanzador
+Architecture: any
+Depends: zenity, ${shlibs:Depends}, ${misc:Depends}
+Description: Create launcher nautilus extension
+ Show «Crear un lanzador...» in nautilus menu and run
+ «/usr/bin/crear_lanzador».
+
